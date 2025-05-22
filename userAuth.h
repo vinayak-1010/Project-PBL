@@ -13,17 +13,44 @@ struct User {
     char username[MAX_USERNAME];
     char password[MAX_PASSWORD];
 };
+int isUsernameTaken(const char *username) {
+    FILE *file = fopen(USER_FILE, "r");
+    if (file == NULL) {
+        return 0; // File doesn't exist, so username isn't taken
+    }
+
+    char fileUsername[50], filePassword[50];
+    while (fscanf(file, "%49s %49s", fileUsername, filePassword) == 2) {
+        if (strcmp(fileUsername, username) == 0) {
+            fclose(file);
+            return 1; // Username already exists
+        }
+    }
+
+    fclose(file);
+    return 0; // Username is available
+}
 
 // Function to register a new user
 void registerUser() {
     struct User newUser;
-    FILE *file = fopen(USER_FILE, "a");
-
 
     printf("Enter new username: ");
-    scanf("%s", newUser.username);
+    scanf("%49s", newUser.username);
+
+    if (isUsernameTaken(newUser.username)) {
+        printf("Error: Username already taken. Please choose a different one.\n");
+        return;
+    }
+
     printf("Enter new password: ");
-    scanf("%s", newUser.password);
+    scanf("%49s", newUser.password);
+
+    FILE *file = fopen(USER_FILE, "a");
+    if (file == NULL) {
+        perror("Error opening file");
+        return;
+    }
 
     fprintf(file, "%s %s\n", newUser.username, newUser.password);
     fclose(file);
