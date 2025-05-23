@@ -84,7 +84,11 @@ void searchByName() {
     fclose(file);
 }
 
-// Search menu
+void clearInputBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);  // Clear until newline
+}
+
 void searchMenu() {
     int choice;
     do {
@@ -93,7 +97,12 @@ void searchMenu() {
         printf("2. Search by Name\n");
         printf("3. Exit Search\n");
         printf("Enter your choice: ");
-        scanf("%d", &choice);
+            
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input. Please enter a number.\n");
+            clearInputBuffer();  // Important to clear buffer
+            continue;            // Skip the rest and re-prompt
+        }
 
         switch (choice) {
             case 1:
@@ -110,4 +119,3 @@ void searchMenu() {
         }
     } while (choice != 3);
 }
-
